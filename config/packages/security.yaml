@@ -13,6 +13,9 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        index:
+            pattern: ^/$
+            security: false
         ping:
             pattern: ^/api/v1/(ping|docs|openapi\.yaml)
             security: false
