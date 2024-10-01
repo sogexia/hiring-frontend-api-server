@@ -8,7 +8,7 @@ security:
         backend_users:
             memory:
                 users:
-                    candidate: { password: '%env(string:API_TOKEN)', roles: [ 'ROLE_USER' ] }
+                    candidate: { password: '%env(string:API_TOKEN)%', roles: [ 'ROLE_USER' ] }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
