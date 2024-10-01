@@ -33,7 +33,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
     public function authenticate(Request $request): Passport
     {
         $authHeader = $request->headers->get('Authorization');
-        $apiToken = strtr($authHeader, ['ApiKey ' => '']);
+        $apiToken = is_null($authHeader) ? null : strtr($authHeader, ['ApiKey ' => '']);
         if (null === $apiToken) {
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
