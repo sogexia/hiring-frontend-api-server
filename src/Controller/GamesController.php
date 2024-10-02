@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\GamesRepositoryI;
+use App\Repository\PlayersRepositoryI;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,10 +13,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GamesController extends AbstractController
 {
+    public function __construct(
+        private GamesRepositoryI $gamesRepository,
+        private PlayersRepositoryI $playersRepository
+    ) {
+    }
+
     #[Route('/api/v1/games', name: 'app_get_games', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        $mock = $this->getGames();
+        $mock = $this->gamesRepository->findAll();
         return $this->json($mock);
     }
 
@@ -40,10 +48,10 @@ class GamesController extends AbstractController
                 return $player["playerId"];
             }, $payload);
             if (array_unique($playersId) !== $playersId) {
-                throw new InvalidArgumentException('Same players cannot be twice in payload.');
+                throw new InvalidArgumentException('Same players cannot be more than once in payload.');
             }
 
-            $players = $this->getPlayers();
+            $players = $this->playersRepository->findAll();
             foreach ($playersId as $id) {
                 $playerFoundInMock = count(array_filter(array_map(function($player) {
                     return $player->id;
@@ -51,42 +59,22 @@ class GamesController extends AbstractController
                     return $playerIdMock === $id;
                 }));
                 if ($playerFoundInMock !== 1) {
-                    throw new InvalidArgumentException(sprintf('Unknown player with id "%s".', $id));
+                    throw new InvalidArgumentException(sprintf('Unknown player with id: %s.', $id));
                 }
             }
 
-            $games = $this->getGames();
+            $games = $this->gamesRepository->findAll();
             $games[] = [
                 "id" => \count($games)+1,
                 "scores" => $payload
             ];
-            file_put_contents($this->getGamesPath(), json_encode($games, JSON_PRETTY_PRINT));
+            $this->gamesRepository->save($games);
             return $this->json(array_pop($games), Response::HTTP_CREATED);
         } catch (InvalidArgumentException $exception) {
-            return $this->json(['error' => $exception->getMessage(), 'stack' => $exception->getTrace()], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Throwable $exception) {
-            return $this->json(['error' => $exception->getMessage(), 'stack' => $exception->getTrace()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private function getGamesPath(): string
-    {
-        return __DIR__ . '/../Mock/games.json';
-    }
-
-    private function getGames(): array
-    {
-        return json_decode(file_get_contents($this->getGamesPath()));
-    }
-
-    private function getPlayersPath(): string
-    {
-        return __DIR__ . '/../Mock/players.json';
-    }
-
-    private function getPlayers(): array
-    {
-        return json_decode(file_get_contents($this->getPlayersPath()));
     }
 }
 
