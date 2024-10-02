@@ -5,7 +5,7 @@ This project is a simple server for Sogexia candidates. It serves mock data for 
 ## Getting Started
 
 1. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
-2. Set any string for the API_TOKEN in file `.env` (ex. API_TOKEN=$2y$13$jxGxcIuqDju)
+2. Set any string for the API_TOKEN in file `.env` (ex. API_TOKEN=MySecret2024!)
 3. Run `docker compose build --no-cache` to build fresh images
 4. Run `docker compose up --pull always -d --wait` to set up and start
 5. Open `https://localhost` in your favorite web browser and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)

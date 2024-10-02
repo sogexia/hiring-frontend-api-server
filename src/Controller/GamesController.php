@@ -26,9 +26,6 @@ class GamesController extends AbstractController
         return $this->json($mock);
     }
 
-    /**
-     * API payload : '[{"playerId": 1, "score": 10}, {"playerId": 2, "score": 2}]'
-     */
     #[Route('/api/v1/games', name: 'app_add_games', methods: ['POST'])]
     public function add(RequestStack $request): JsonResponse
     {
@@ -71,9 +68,9 @@ class GamesController extends AbstractController
             $this->gamesRepository->save($games);
             return $this->json(array_pop($games), Response::HTTP_CREATED);
         } catch (InvalidArgumentException $exception) {
-            return $this->json(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json(['message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Throwable $exception) {
-            return $this->json(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['message' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

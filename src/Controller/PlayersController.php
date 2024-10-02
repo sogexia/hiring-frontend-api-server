@@ -48,9 +48,9 @@ class PlayersController extends AbstractController
             }
             return $this->json(array_pop($players), $response);
         } catch (InvalidArgumentException $exception) {
-            return $this->json(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json(['message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Throwable $exception) {
-            return $this->json(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['message' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

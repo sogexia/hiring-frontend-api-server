@@ -23,12 +23,11 @@ paths:
                         application/json:
                             schema:
                                 type: object
-                                items:
-                                    properties:
-                                        ping:
-                                            type: string
-                                        ack:
-                                            type: string
+                                properties:
+                                    ping:
+                                        type: string
+                                    ack:
+                                        type: string
     /players:
         get:
             tags:
@@ -41,9 +40,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                type: array
-                                items:
-                                    $ref: '#/components/schemas/Players'
+                                $ref: '#/components/schemas/Players'
         post:
             tags:
                 - players
@@ -54,6 +51,7 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/PlayerPayload'
+                            
                 required: true
             responses:
                 '200':
@@ -70,8 +68,16 @@ paths:
                                 $ref: '#/components/schemas/Player'
                 '400':
                     description: Invalid input
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
                 '500':
                     description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
     /games:
         get:
             tags:
@@ -84,9 +90,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                type: array
-                                items:
-                                    $ref: '#/components/schemas/Games'
+                                $ref: '#/components/schemas/Games'
         post:
             tags:
                 - games
@@ -115,11 +119,12 @@ components:
     schemas:
         Players:
             type: array
-            description: Players
+            description: List of players
             items:
                 $ref: '#/components/schemas/Player'
         Player:
             type: object
+            description : One player
             properties:
                 id:
                     type: integer
@@ -127,22 +132,31 @@ components:
                     type: string
         PlayerPayload:
             type: object
+            description: Player used in POST request body to create a new player
             properties: 
                 name: 
                     type: string
         Games:
             type: array
-            description: Games
-            $ref: '#/components/schemas/Game'            
+            description: List of games
+            items:
+                $ref: '#/components/schemas/Game'            
         Game:
             type: object
+            description: One game
             properties:
                 id:
                     type: integer
-                score:
-                    $ref: '#/components/schemas/Score'
+                scores:
+                    $ref: '#/components/schemas/Scores'
+        Scores:
+            type: array
+            description: List of scores
+            items:
+                $ref: '#/components/schemas/Score'
         Score:
             type: object
+            description: One score for one player
             properties: 
                 playerId: 
                     type: integer
@@ -150,7 +164,14 @@ components:
                     type: integer
         GamePayload:
             type: array
-            $ref: '#/components/schemas/Score'
+            description: Game used in POST request body to create a new score
+            $ref: '#/components/schemas/Scores'
+        Error:
+            type: object
+            description: Error message
+            properties:
+                message:
+                    type: string
                 
     securitySchemes:
         apiKeyAuth:
