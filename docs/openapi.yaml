@@ -160,4 +160,4 @@ components:
             description: The content of the Authorization header must be "Apikey YOUR_API_KEY"
             
 security:
-    - apiKey: []
+    - apiKeyAuth: []
