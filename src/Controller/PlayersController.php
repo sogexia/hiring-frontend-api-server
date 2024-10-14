@@ -44,9 +44,15 @@ class PlayersController extends AbstractController
                 ];
 
                 $this->playersRepository->save($players);
+                $player = array_pop($players);
                 $response = Response::HTTP_CREATED;
+            } else {
+                $player = current(
+                    array_filter($players, function ($player) use ($name) {
+                    return $player->name === $name;
+                }));
             }
-            return $this->json(array_pop($players), $response);
+            return $this->json($player, $response);
         } catch (InvalidArgumentException $exception) {
             return $this->json(['message' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Throwable $exception) {
